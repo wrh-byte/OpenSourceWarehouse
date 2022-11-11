@@ -1,0 +1,11 @@
+# Default ignored files
+/shelf/
+*.log
+*.temp
+/vendor
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+**/[Pp]ackages/*
+
