@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using XrmToolBox.Extensibility;
 using XrmToolBox.Extensibility.Args;
 using XrmToolBox.Extensibility.Interfaces;
+using static SolutionComponentSplit.Model.OptionSets;
 
 namespace SolutionComponentSplit
 {
@@ -30,7 +31,7 @@ namespace SolutionComponentSplit
 
         private void MyPluginControl_Load(object sender, EventArgs e)
         {
-            ShowInfoNotification("This is a notification that can lead to XrmToolBox repository", new Uri("https://github.com/MscrmTools/XrmToolBox"));
+            ShowInfoNotification("The tool git repository url is here", new Uri("https://github.com/wrh-byte/OpenSourceWarehouse"));
             solutionHelper = new SolutionOperation((Microsoft.Xrm.Tooling.Connector.CrmServiceClient)Service);
             // Loads or creates the settings for the plugin
             if (!SettingsManager.Instance.TryLoad(GetType(), out mySettings))

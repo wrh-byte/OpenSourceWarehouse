@@ -5,4 +5,7 @@
     <StartProgram>D:\MyGitHub\OpenSourceWarehouse\SolutionComponentSplit\SolutionComponentSplit\bin\Debug\XrmToolBox.exe</StartProgram>
     <StartArguments>/overridepath:.</StartArguments>
   </PropertyGroup>
+  <PropertyGroup>
+    <ProjectView>ProjectFiles</ProjectView>
+  </PropertyGroup>
 </Project>
