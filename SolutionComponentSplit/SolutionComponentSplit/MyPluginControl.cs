@@ -20,7 +20,7 @@ namespace SolutionComponentSplit
     {
         private Settings mySettings;
 
-        private List<SolutionComponent> solutionComponentList;
+        private List<Entity> solutionComponentList;
 
         private SolutionOperation solutionHelper;
 
@@ -66,11 +66,11 @@ namespace SolutionComponentSplit
             }
 
             Guid primarySolutionId = solutionHelper.RetrieveSolution(SolutionNameText.Text);
-            solutionComponentList = solutionHelper.GetSolutionComponets(primarySolutionId).OrderBy(c => c.ComponentType.Value).ToList();
+            solutionComponentList = solutionHelper.GetSolutionComponets(primarySolutionId).OrderBy(c => c.Attributes["componenttype"].ToString()).ToList();
             TotalCount.Text = "TotalCount:" + solutionComponentList.Count;
 
             //Get Component Type
-            var componentList = solutionComponentList.Select(c => c.ComponentType.Value).Distinct();
+            var componentList = solutionComponentList.Select(c => c.GetAttributeValue<OptionSetValue>("componenttype").Value).Distinct();
 
             //Add solution 1 componet list
             foreach (var item in componentList)
@@ -84,9 +84,9 @@ namespace SolutionComponentSplit
 
             //Add Component To List View
             List<ComponentView> componentDataGridViewList = new List<ComponentView>();
-            foreach (SolutionComponent item in solutionComponentList)
+            foreach (Entity item in solutionComponentList)
             {
-                componentDataGridViewList.Add(new ComponentView() { CompnetType = ((componenttype)(item.ComponentType.Value)).ToString(), ObjctId = item.ObjectId.ToString() });
+                componentDataGridViewList.Add(new ComponentView() { CompnetType = ((componenttype)(item.GetAttributeValue<OptionSetValue>("componenttype").Value)).ToString(), ObjctId = item.GetAttributeValue<Guid>("objectid").ToString() });
             }
             if(componentDataGridViewList!=null&& componentDataGridViewList.Count > 0)
             {
@@ -169,16 +169,16 @@ namespace SolutionComponentSplit
             var solution2ContainSetting = S2ComponentList.SelectedItems;
 
             //Add Component In Solution 1
-            foreach (SolutionComponent item in solutionComponentList)
+            foreach (Entity item in solutionComponentList)
             {
-                if (solution1ContainSetting.Contains((componenttype)item.ComponentType.Value))
+                if (solution1ContainSetting.Contains((componenttype)item.GetAttributeValue<OptionSetValue>("componenttype").Value))
                 {
-                    solutionHelper.AddSolutionComponet(item.ComponentType.Value, (Guid)item.ObjectId, Solution1Text.Text);
+                    solutionHelper.AddSolutionComponet(item.GetAttributeValue<OptionSetValue>("componenttype").Value, item.GetAttributeValue<Guid>("objectid"), Solution1Text.Text);
                 }
 
-                if (solution2ContainSetting.Contains((componenttype)item.ComponentType.Value))
+                if (solution2ContainSetting.Contains((componenttype)item.GetAttributeValue<OptionSetValue>("componenttype").Value))
                 {
-                    solutionHelper.AddSolutionComponet(item.ComponentType.Value, (Guid)item.ObjectId, Solution2Text.Text);
+                    solutionHelper.AddSolutionComponet(item.GetAttributeValue<OptionSetValue>("componenttype").Value, item.GetAttributeValue<Guid>("objectid"), Solution2Text.Text);
                 }
             }
 

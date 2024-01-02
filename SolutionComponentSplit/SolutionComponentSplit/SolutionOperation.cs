@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 
 using System.Linq;
+using System.Windows;
 using static SolutionComponentSplit.Model.OptionSets;
 
 namespace SolutionComponentSplit
@@ -21,6 +22,7 @@ namespace SolutionComponentSplit
 
         public Guid RetrieveSolution(string solutionUniqueName)
         {
+            Entity solution = null;
             // Retrieve a solution
             QueryExpression querySampleSolution = new QueryExpression
             {
@@ -30,20 +32,25 @@ namespace SolutionComponentSplit
             };
 
             querySampleSolution.Criteria.AddCondition("uniquename", ConditionOperator.Equal, solutionUniqueName);
-            Solution solution = (Solution)_serviceProxy.RetrieveMultiple(querySampleSolution).Entities[0];
-            if (solution.Id != null && solution.Id != Guid.Empty)
+            EntityCollection result = _serviceProxy.RetrieveMultiple(querySampleSolution);
+            if (result != null && result.Entities.Count > 0)
             {
-                return solution.Id;
+                solution = result.Entities.FirstOrDefault();
+                if (solution.Id != null && solution.Id != Guid.Empty)
+                {
+                    return solution.Id;
+                }
             }
             else
             {
-                return Guid.Empty;
+                MessageBox.Show($"The solution :{solutionUniqueName} does not exist", "Error");
             }
+            return Guid.Empty;
         }
 
-        public List<SolutionComponent> GetSolutionComponets(Guid primarySolutionId)
+        public List<Entity> GetSolutionComponets(Guid primarySolutionId)
         {
-            List<SolutionComponent> solutionComponents = new List<SolutionComponent>();
+            List<Entity> solutionComponents = new List<Entity>();
             ////Get All Components in Solution
             QueryByAttribute componentQuery = new QueryByAttribute
             {
@@ -55,14 +62,15 @@ namespace SolutionComponentSplit
                 Values = { primarySolutionId }
             };
 
-            IEnumerable<SolutionComponent> allComponents = _serviceProxy.RetrieveMultiple(componentQuery).Entities.Cast<SolutionComponent>();
-
-            foreach (SolutionComponent component in allComponents)
+            EntityCollection allComponents = _serviceProxy.RetrieveMultiple(componentQuery);
+            if (allComponents != null && allComponents.Entities.Count > 0)
             {
-                solutionComponents.Add(component);
-                Console.WriteLine($"objectId:{component.ObjectId} | ComponentType:{GetEnumNameByKey(component.ComponentType.Value)} | ComponentId:{component.Id} ");
+                foreach (Entity component in allComponents.Entities)
+                {
+                    solutionComponents.Add(component);
+                    Console.WriteLine($"objectId:{component.GetAttributeValue<Guid>("objectid")} | ComponentType:{GetEnumNameByKey(component.GetAttributeValue<OptionSetValue>("componenttype").Value)} | ComponentId:{component.Id} ");
+                }
             }
-
             return solutionComponents;
         }
 
